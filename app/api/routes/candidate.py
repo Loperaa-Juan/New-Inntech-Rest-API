@@ -5,10 +5,12 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from ...schemas import Candidate as _candidate
+from ...services import auth_service as _authServices
 from ...services import candidate_service as _candidateServices
 from ...services import database as _databaseServices
 
-router = APIRouter()
+# Todas las rutas de candidatos requieren el token del administrador
+router = APIRouter(dependencies=[Depends(_authServices.get_current_admin)])
 
 
 @router.post("", response_model=_candidate.Candidate, status_code=201)

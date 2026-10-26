@@ -5,15 +5,18 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from ...schemas import Voter as _voter
+from ...services import auth_service as _authServices
 from ...services import database as _databaseServices
 from ...services import voter_service as _voterServices
 
-router = APIRouter()
+# Todas las rutas de votantes requieren el token del administrador
+router = APIRouter(dependencies=[Depends(_authServices.get_current_admin)])
 
 
 @router.post("", response_model=_voter.Voter, status_code=201)
 def create_voter(
-    voter: _voter.VoterCreate, db: Annotated[Session, Depends(_databaseServices.get_db)]
+    voter: _voter.VoterCreate, 
+    db: Annotated[Session, Depends(_databaseServices.get_db)],
 ):
     voter = _voterServices.create_voter(voter, db=db)
 

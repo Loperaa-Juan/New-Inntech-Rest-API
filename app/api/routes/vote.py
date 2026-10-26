@@ -5,10 +5,12 @@ from sqlalchemy.orm import Session
 
 from ...schemas import Vote as _vote
 from ...schemas import statistics as _statistics
+from ...services import auth_service as _authServices
 from ...services import database as _databaseServices
 from ...services import vote_service as _voteServices
 
-router = APIRouter()
+# Todas las rutas de votos requieren el token del administrador
+router = APIRouter(dependencies=[Depends(_authServices.get_current_admin)])
 
 
 @router.post("", response_model=_vote.Vote, status_code=201)
