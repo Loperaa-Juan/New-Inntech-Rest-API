@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import APIRouter, FastAPI
 from fastapi.responses import RedirectResponse
 
-from .api.routes import health_router, voter_router
+from .api.routes import candidate_router, health_router, voter_router
 from .services import database as _databaseService
 
 
@@ -33,5 +33,6 @@ router = APIRouter(prefix="/api")
 
 router.include_router(health_router)
 router.include_router(voter_router, prefix="/voters", tags=["Voters"])
+router.include_router(candidate_router, prefix="/candidates", tags=["Candidates"])
 
 app.include_router(router)
