@@ -13,10 +13,10 @@ async def lifespan(app: FastAPI):
     yield
 
 
-# Inicilizamos la aplicación FastAPI
+# Inicializamos la aplicación FastAPI
 app = FastAPI(
     title="Sistema de Votaciones",
-    description="API para un sistema de votaciones que permite a los usuarios crear encuestas, votar y ver resultados.",
+    description="API REST para gestionar una votación: registro de votantes y candidatos, emisión de votos (uno por votante) y estadísticas de resultados. Un votante no puede ser candidato, ni un candidato votante.",
     version="1.0.0",
     lifespan=lifespan,
 )
