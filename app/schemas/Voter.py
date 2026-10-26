@@ -6,6 +6,7 @@ import pydantic as _pydantic
 class VoterBase(_pydantic.BaseModel):
     name: str = _pydantic.Field(min_length=1)
     email: _pydantic.EmailStr
+    document_number: str = _pydantic.Field(min_length=1)
 
     model_config = _pydantic.ConfigDict(from_attributes=True)
 

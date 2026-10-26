@@ -11,4 +11,5 @@ class Voter(_database.Base):
     id = _sql.Column(UUID(as_uuid=True), primary_key=True, default=_uuid)
     name = _sql.Column(_sql.String, nullable=False, index=True)
     email = _sql.Column(_sql.String, unique=True, nullable=False, index=True)
+    document_number = _sql.Column(_sql.String, unique=True, nullable=False, index=True)
     has_voted = _sql.Column(_sql.Boolean, nullable=False, default=False)
