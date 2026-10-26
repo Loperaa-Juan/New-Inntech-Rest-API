@@ -42,6 +42,5 @@ router.include_router(auth_router, prefix="/auth", tags=["Auth"])
 router.include_router(voter_router, prefix="/voters", tags=["Voters"])
 router.include_router(candidate_router, prefix="/candidates", tags=["Candidates"])
 router.include_router(vote_router, prefix="/votes", tags=["Votes"])
-router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 
 app.include_router(router)

@@ -43,7 +43,7 @@ def _unauthorized(detail: str):
 
 
 def create_access_token(subject: str):
-    expire = datetime.now(timezone.UTC) + timedelta(minutes=JWT_EXPIRE_MINUTES)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=JWT_EXPIRE_MINUTES)
     payload = {"sub": subject, "exp": expire}
 
     return jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
