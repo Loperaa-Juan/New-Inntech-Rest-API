@@ -4,8 +4,8 @@ import pydantic as _pydantic
 
 
 class VoteBase(_pydantic.BaseModel):
-    voter_id: _uuid.UUID = _pydantic.Field(alias="voter_id")
-    candidate_id: _uuid.UUID = _pydantic.Field(alias="candidate_id")
+    voter_id: _uuid.UUID
+    candidate_id: _uuid.UUID
 
     model_config = _pydantic.ConfigDict(from_attributes=True)
 
