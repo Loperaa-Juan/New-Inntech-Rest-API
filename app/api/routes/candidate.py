@@ -1,10 +1,11 @@
 import uuid as _uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from ...schemas import Candidate as _candidate
+from ...schemas import pagination as _pagination
 from ...services import auth_service as _authServices
 from ...services import candidate_service as _candidateServices
 from ...services import database as _databaseServices
@@ -23,9 +24,16 @@ def create_candidate(
     return candidate
 
 
-@router.get("", response_model=list[_candidate.Candidate])
-def get_candidates(db: Annotated[Session, Depends(_databaseServices.get_db)]):
-    return _candidateServices.get_all_candidates(db)
+@router.get("", response_model=_pagination.Page[_candidate.Candidate])
+def get_candidates(
+    filters: Annotated[_candidate.CandidateFilters, Query()],
+    db: Annotated[Session, Depends(_databaseServices.get_db)],
+):
+    """
+    Lista los candidatos ordenados por nombre, paginados con `skip` y `limit` (máximo 100).
+    `name` y `party` buscan coincidencias parciales sin distinguir mayúsculas.
+    """
+    return _candidateServices.get_all_candidates(filters, db)
 
 
 @router.get("/{id}", response_model=_candidate.Candidate)

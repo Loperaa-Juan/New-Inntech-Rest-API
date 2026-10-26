@@ -1,10 +1,11 @@
 import uuid as _uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from ...schemas import Voter as _voter
+from ...schemas import pagination as _pagination
 from ...services import auth_service as _authServices
 from ...services import database as _databaseServices
 from ...services import voter_service as _voterServices
@@ -23,9 +24,16 @@ def create_voter(
     return voter
 
 
-@router.get("", response_model=list[_voter.Voter])
-def get_voters(db: Annotated[Session, Depends(_databaseServices.get_db)]):
-    return _voterServices.get_all_voters(db)
+@router.get("", response_model=_pagination.Page[_voter.Voter])
+def get_voters(
+    filters: Annotated[_voter.VoterFilters, Query()],
+    db: Annotated[Session, Depends(_databaseServices.get_db)],
+):
+    """
+    Lista los votantes ordenados por nombre, paginados con `skip` y `limit` (máximo 100).
+    `name` busca coincidencias parciales sin distinguir mayúsculas.
+    """
+    return _voterServices.get_all_voters(filters, db)
 
 
 @router.get("/{id}", response_model=_voter.Voter)

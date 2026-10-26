@@ -45,8 +45,34 @@ def create_candidate(candidate: candidate_schema.CandidateCreate, db: _orm.Sessi
         raise HTTPException(status_code=409, detail="El candidato ya está registrado")
 
 
-def get_all_candidates(db: _orm.Session):
-    return db.query(Candidate).all()
+def get_all_candidates(filters: candidate_schema.CandidateFilters, db: _orm.Session):
+    query = db.query(Candidate)
+
+    if filters.name is not None:
+        # autoescape hace que "%" y "_" se busquen como texto y no como comodines
+        query = query.filter(Candidate.name.icontains(filters.name, autoescape=True))
+
+    if filters.party is not None:
+        query = query.filter(Candidate.party.icontains(filters.party, autoescape=True))
+
+    # Contamos antes de paginar para que el total refleje los filtros, no solo la página
+    total = query.count()
+
+    # Sin un orden fijo, PostgreSQL puede repetir o saltarse filas entre páginas.
+    # El id desempata a los candidatos con el mismo nombre.
+    items = (
+        query.order_by(Candidate.name, Candidate.id)
+        .offset(filters.skip)
+        .limit(filters.limit)
+        .all()
+    )
+
+    return {
+        "items": items,
+        "total": total,
+        "skip": filters.skip,
+        "limit": filters.limit,
+    }
 
 
 def get_candidate_by_id(id: _uuid.UUID, db: _orm.Session):

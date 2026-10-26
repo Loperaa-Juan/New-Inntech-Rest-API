@@ -44,8 +44,34 @@ def create_voter(voter: voter_schema.VoterCreate, db: _orm.Session):
         raise HTTPException(status_code=409, detail="El votante ya está registrado")
 
 
-def get_all_voters(db: _orm.Session):
-    return db.query(Voter).all()
+def get_all_voters(filters: voter_schema.VoterFilters, db: _orm.Session):
+    query = db.query(Voter)
+
+    if filters.name is not None:
+        # autoescape hace que "%" y "_" se busquen como texto y no como comodines
+        query = query.filter(Voter.name.icontains(filters.name, autoescape=True))
+
+    if filters.has_voted is not None:
+        query = query.filter(Voter.has_voted == filters.has_voted)
+
+    # Contamos antes de paginar para que el total refleje los filtros, no solo la página
+    total = query.count()
+
+    # Sin un orden fijo, PostgreSQL puede repetir o saltarse filas entre páginas.
+    # El id desempata a los votantes con el mismo nombre.
+    items = (
+        query.order_by(Voter.name, Voter.id)
+        .offset(filters.skip)
+        .limit(filters.limit)
+        .all()
+    )
+
+    return {
+        "items": items,
+        "total": total,
+        "skip": filters.skip,
+        "limit": filters.limit,
+    }
 
 
 def get_voter_by_id(id: _uuid.UUID, db: _orm.Session):
