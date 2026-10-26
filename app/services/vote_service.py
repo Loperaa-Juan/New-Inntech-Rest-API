@@ -4,9 +4,7 @@ import sqlalchemy.orm as _orm
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 
-from app.models import Voter
-
-from ..models import Candidate, Vote
+from ..models import Candidate, Vote, Voter
 from .candidate_service import get_candidate_by_id
 from .voter_service import get_voter_by_id
 
