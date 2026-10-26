@@ -1,4 +1,3 @@
-import psycopg2
 from ..db import base as _database
 
 from ..models import Voter as _voterModel
