@@ -58,12 +58,16 @@ def get_voter_by_id(id: _uuid.UUID, db: _orm.Session):
 
 
 def delete_voter(id: _uuid.UUID, db: _orm.Session):
-    voter = db.query(Voter).filter(Voter.id == id).first()
-
-    if not voter:
-        raise HTTPException(status_code=404, detail="Votante no encontrado")
+    voter = get_voter_by_id(id, db)
 
     db.delete(voter)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="No se puede eliminar un votante que ya votó",
+        )
 
     return {"message": "Votante eliminado exitosamente"}
