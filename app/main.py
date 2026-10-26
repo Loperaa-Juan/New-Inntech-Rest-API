@@ -1,13 +1,24 @@
+from contextlib import asynccontextmanager
+
 from fastapi import APIRouter, FastAPI
 from fastapi.responses import RedirectResponse
 
 from .api.routes import health_router
+from .services import database as _databaseService
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    _databaseService.create_database()
+    yield
+
 
 # Inicilizamos la aplicación FastAPI
 app = FastAPI(
     title="Sistema de Votaciones",
     description="API para un sistema de votaciones que permite a los usuarios crear encuestas, votar y ver resultados.",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 
