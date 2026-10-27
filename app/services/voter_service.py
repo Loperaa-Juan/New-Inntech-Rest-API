@@ -95,5 +95,3 @@ def delete_voter(id: _uuid.UUID, db: _orm.Session):
             status_code=409,
             detail="No se puede eliminar un votante que ya votó",
         )
-
-    return {"message": "Votante eliminado exitosamente"}

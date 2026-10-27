@@ -96,5 +96,3 @@ def delete_candidate(id: _uuid.UUID, db: _orm.Session):
             status_code=409,
             detail="No se puede eliminar un candidato que ya tiene votos",
         )
-
-    return {"message": "Candidato eliminado exitosamente"}

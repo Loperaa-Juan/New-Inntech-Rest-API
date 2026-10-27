@@ -112,11 +112,11 @@ _Todas las rutas tienen el prefijo **`/api`**._
 | `POST` | `/api/voters` | Registrar un votante. | `201`, `409`, `422` |
 | `GET` | `/api/voters` | Listar votantes (paginado y con filtros). | `200`, `422` |
 | `GET` | `/api/voters/{id}` | Obtener un votante. | `200`, `404`, `422` |
-| `DELETE` | `/api/voters/{id}` | Eliminar un votante. | `200`, `404`, `409` |
+| `DELETE` | `/api/voters/{id}` | Eliminar un votante (responde sin cuerpo). | `204`, `404`, `409`, `422` |
 | `POST` | `/api/candidates` | Registrar un candidato. | `201`, `409`, `422` |
 | `GET` | `/api/candidates` | Listar candidatos (paginado y con filtros). | `200`, `422` |
 | `GET` | `/api/candidates/{id}` | Obtener un candidato. | `200`, `404`, `422` |
-| `DELETE` | `/api/candidates/{id}` | Eliminar un candidato. | `200`, `404`, `409` |
+| `DELETE` | `/api/candidates/{id}` | Eliminar un candidato (responde sin cuerpo). | `204`, `404`, `409`, `422` |
 | `POST` | `/api/votes` | Emitir un voto. | `201`, `404`, `409`, `422` |
 | `GET` | `/api/votes` | Listar todos los votos. | `200` |
 | `GET` | `/api/votes/statistics` | Estadísticas de la votación. | `200` |

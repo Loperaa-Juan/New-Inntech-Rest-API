@@ -4,16 +4,28 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from ...schemas import Vote as _vote
+from ...schemas import errors as _errors
 from ...schemas import statistics as _statistics
 from ...services import auth_service as _authServices
 from ...services import database as _databaseServices
 from ...services import vote_service as _voteServices
 
 # Todas las rutas de votos requieren el token del administrador
-router = APIRouter(dependencies=[Depends(_authServices.get_current_admin)])
+router = APIRouter(
+    dependencies=[Depends(_authServices.get_current_admin)],
+    responses=_errors.UNAUTHORIZED,
+)
 
 
-@router.post("", response_model=_vote.Vote, status_code=201)
+@router.post(
+    "",
+    response_model=_vote.Vote,
+    status_code=201,
+    responses={
+        404: _errors.error_response("Votante no encontrado o candidato no encontrado"),
+        409: _errors.error_response("El votante ya ha emitido su voto"),
+    },
+)
 def create_vote(
     vote: _vote.VoteCreate,
     db: Annotated[Session, Depends(_databaseServices.get_db)],

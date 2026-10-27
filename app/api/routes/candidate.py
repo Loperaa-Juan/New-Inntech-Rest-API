@@ -5,16 +5,29 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from ...schemas import Candidate as _candidate
+from ...schemas import errors as _errors
 from ...schemas import pagination as _pagination
 from ...services import auth_service as _authServices
 from ...services import candidate_service as _candidateServices
 from ...services import database as _databaseServices
 
 # Todas las rutas de candidatos requieren el token del administrador
-router = APIRouter(dependencies=[Depends(_authServices.get_current_admin)])
+router = APIRouter(
+    dependencies=[Depends(_authServices.get_current_admin)],
+    responses=_errors.UNAUTHORIZED,
+)
 
 
-@router.post("", response_model=_candidate.Candidate, status_code=201)
+@router.post(
+    "",
+    response_model=_candidate.Candidate,
+    status_code=201,
+    responses={
+        409: _errors.error_response(
+            "El documento ya está registrado o pertenece a un votante"
+        )
+    },
+)
 def create_candidate(
     candidate: _candidate.CandidateCreate,
     db: Annotated[Session, Depends(_databaseServices.get_db)],
@@ -36,15 +49,26 @@ def get_candidates(
     return _candidateServices.get_all_candidates(filters, db)
 
 
-@router.get("/{id}", response_model=_candidate.Candidate)
+@router.get(
+    "/{id}",
+    response_model=_candidate.Candidate,
+    responses={404: _errors.error_response("Candidato no encontrado")},
+)
 def get_candidate_by_id(
     id: _uuid.UUID, db: Annotated[Session, Depends(_databaseServices.get_db)]
 ):
     return _candidateServices.get_candidate_by_id(id, db)
 
 
-@router.delete("/{id}")
+@router.delete(
+    "/{id}",
+    status_code=204,
+    responses={
+        404: _errors.error_response("Candidato no encontrado"),
+        409: _errors.error_response("No se puede eliminar un candidato que ya tiene votos"),
+    },
+)
 def delete_candidate(
     id: _uuid.UUID, db: Annotated[Session, Depends(_databaseServices.get_db)]
 ):
-    return _candidateServices.delete_candidate(id, db)
+    _candidateServices.delete_candidate(id, db)
