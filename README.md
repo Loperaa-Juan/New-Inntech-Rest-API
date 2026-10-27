@@ -77,6 +77,10 @@ uv run fastapi dev
 
 La documentación interactiva (Swagger) queda en **http://localhost:8000/docs**. La raíz `/` redirige ahí.
 
+![Documentación de la API en Swagger](docs/documentacion.png)
+
+_Swagger lista todos los endpoints. Los que tienen candado requieren token, que se obtiene con el botón **Authorize**._
+
 _Las tablas se crean solas al arrancar la API. Para empezar con la base vacía, corre `docker compose down -v` (borra todos los datos)._
 
 ## Autenticación 🔐
