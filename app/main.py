@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import APIRouter, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
 from .api.routes import (
@@ -25,6 +26,14 @@ app = FastAPI(
     description="API REST para gestionar una votación: registro de votantes y candidatos, emisión de votos (uno por votante) y estadísticas de resultados. Un votante no puede ser candidato, ni un candidato votante.",
     version="1.0.0",
     lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
