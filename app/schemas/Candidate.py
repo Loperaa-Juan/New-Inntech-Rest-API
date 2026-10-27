@@ -10,7 +10,8 @@ class CandidateBase(_pydantic.BaseModel):
     document_number: str = _pydantic.Field(min_length=1)
     party: str | None = _pydantic.Field(default=None, min_length=1)
 
-    model_config = _pydantic.ConfigDict(from_attributes=True)
+    # Quita los espacios de los extremos: "   " no pasa min_length y " 111" es el mismo documento que "111"
+    model_config = _pydantic.ConfigDict(from_attributes=True, str_strip_whitespace=True)
 
 
 class CandidateCreate(CandidateBase):
